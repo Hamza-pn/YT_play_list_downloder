@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 255 255 255;
+  --bg-subtle: 248 250 252;
+  --fg: 15 23 42;
+  --fg-muted: 100 116 139;
+  --border: 226 232 240;
+  --card: 255 255 255;
+}
+
+.dark {
+  --bg: 8 11 20;
+  --bg-subtle: 15 19 31;
+  --fg: 241 245 249;
+  --fg-muted: 148 163 184;
+  --border: 30 36 52;
+  --card: 15 19 31;
+}
+
+body {
+  background-color: rgb(var(--bg));
+  color: rgb(var(--fg));
+}
+
+@layer utilities {
+  .bg-subtle {
+    background-color: rgb(var(--bg-subtle));
+  }
+  .text-muted {
+    color: rgb(var(--fg-muted));
+  }
+  .border-default {
+    border-color: rgb(var(--border));
+  }
+  .bg-card {
+    background-color: rgb(var(--card));
+  }
+
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: rgb(var(--border));
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+::selection {
+  background-color: rgb(99 102 241 / 0.3);
+}
