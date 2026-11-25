@@ -21,13 +21,26 @@ from app.services.media_retrieval import get_media_retrieval_service
 from app.services.media_retrieval.base import PlaylistInfo
 from app.services.session_service import clamp_quality_for_user
 from app.utils.errors import JobNotFoundError, PlaylistTooLargeError
-from app.utils.validators import validate_playlist_url
+from app.utils.validators import SourceKind, validate_source_url
 
 
-def analyze_playlist(raw_url: str, *, max_videos: int) -> PlaylistInfo:
-    validated_url = validate_playlist_url(raw_url)
+def analyze_source(raw_url: str, *, max_videos: int) -> PlaylistInfo:
+    """Resolve any supported YouTube URL into a PlaylistInfo.
+
+    A playlist URL yields its videos; a single video / Shorts / youtu.be
+    URL yields a one-item PlaylistInfo. Both take exactly the same path
+    from here on, so the download pipeline is shared.
+    """
+    source = validate_source_url(raw_url)
     service = get_media_retrieval_service()
-    return service.get_playlist_info(validated_url, max_videos=max_videos)
+    if source.kind is SourceKind.VIDEO:
+        return service.get_video_info(source.url)
+    return service.get_playlist_info(source.url, max_videos=max_videos)
+
+
+# Backwards-compatible alias: this entry point now accepts single videos
+# too, but the name is referenced by existing callers and tests.
+analyze_playlist = analyze_source
 
 
 def playlist_info_to_schema(info: PlaylistInfo) -> PlaylistOut:

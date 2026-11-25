@@ -63,6 +63,19 @@ class MediaRetrievalService(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def get_video_info(self, video_url: str) -> PlaylistInfo:
+        """Fetch metadata for ONE video (a normal video, a Short, or a live
+        replay) and return it as a single-item PlaylistInfo.
+
+        Returning the same PlaylistInfo shape as get_playlist_info is
+        deliberate: every stage downstream of here (job creation, the
+        conversion worker, zipping, progress reporting) already operates on
+        a collection of videos, so a single video is just a collection of
+        one and needs no special-casing anywhere else.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
     def download_audio(
         self,
         video_id: str,

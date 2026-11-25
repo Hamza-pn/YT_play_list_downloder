@@ -20,6 +20,6 @@ async def analyze_playlist(
     settings: AppSettings,
 ) -> APIResponse[PlaylistOut]:
     info = await run_in_threadpool(
-        job_service.analyze_playlist, payload.url, max_videos=settings.max_playlist_videos
+        job_service.analyze_source, payload.url, max_videos=settings.max_playlist_videos
     )
     return APIResponse(data=job_service.playlist_info_to_schema(info))

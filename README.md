@@ -1,6 +1,7 @@
-# PlaylistAudio — YouTube Playlist Audio Downloader
+# PlaylistAudio — YouTube Playlist & Video Audio Downloader
 
-Convert audio from YouTube playlists you own or have explicit permission to
+Convert audio from YouTube playlists, single videos, and Shorts you own or
+have explicit permission to
 download, into tagged MP3/M4A/WAV files. Full-stack app: Next.js frontend,
 FastAPI backend, FFmpeg-based conversion pipeline, background job processing,
 live progress via SSE, and automatic file cleanup.
@@ -25,8 +26,11 @@ live progress via SSE, and automatic file cleanup.
 
 ## 2. Features (Phase 1 — implemented & tested)
 
-- Playlist URL validation with SSRF protection (host allow-list + DNS-rebinding guard)
-- Playlist analysis: title, thumbnail, channel, video count, per-video duration/thumbnail/availability
+- URL validation with SSRF protection (host allow-list + DNS-rebinding guard)
+- Two source kinds, one pipeline:
+  - **Playlist** — `/playlist?list=…`, or `/watch?v=…&list=…` (a `list=` param always wins, so opening a video from inside a playlist still gets the whole playlist)
+  - **Single video** — `/watch?v=…`, `/shorts/<id>`, `/live/<id>`, `/embed/<id>`, and `youtu.be/<id>` short links. A single video is modelled as a one-item playlist, so job creation, conversion, progress, ZIP and cleanup are shared code with no special-casing
+- Analysis: title, thumbnail, channel, video count, per-video duration/thumbnail/availability
 - Select all / specific videos, search, sort
 - MP3 (128/192/256/320 kbps), M4A, WAV output — stream-copy instead of re-encoding when the source already matches
 - Automatic metadata: title, artist, album (playlist name), track number, year, embedded cover art — sanitized before writing

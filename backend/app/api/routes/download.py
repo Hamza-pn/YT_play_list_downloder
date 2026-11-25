@@ -45,7 +45,7 @@ async def create_download(
     session_service.enforce_concurrent_job_limit(db, user)
 
     info = await run_in_threadpool(
-        job_service.analyze_playlist, payload.playlist_url, max_videos=settings.max_playlist_videos
+        job_service.analyze_source, payload.playlist_url, max_videos=settings.max_playlist_videos
     )
     job = job_service.create_download_job(db, user, info, payload, settings)
     session_service.increment_daily_count(db, user)

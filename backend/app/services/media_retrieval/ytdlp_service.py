@@ -121,6 +121,66 @@ class YtDlpService(MediaRetrievalService):
             videos=videos,
         )
 
+    def get_video_info(self, video_url: str) -> PlaylistInfo:
+        ydl_opts = {
+            "quiet": True,
+            "no_warnings": True,
+            "skip_download": True,
+            # Hard guarantee that a watch URL which still carries a list=
+            # or start_radio= param can never expand into a whole playlist.
+            "noplaylist": True,
+            "socket_timeout": 15,
+        }
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(video_url, download=False)
+        except yt_dlp.utils.DownloadError as exc:
+            raise _map_download_error(exc) from exc
+
+        if info is None:
+            raise PlaylistNotFoundError("The requested video could not be found.")
+
+        # noplaylist normally collapses this to a single video dict, but if
+        # the extractor still hands back entries, take the first one.
+        if info.get("entries"):
+            entries = [e for e in info["entries"] if e]
+            if not entries:
+                raise ContentUnavailableError("This video is unavailable.")
+            info = entries[0]
+
+        if not _is_available(info):
+            raise PermissionDeniedError(
+                "This video is private, members-only, or otherwise restricted. "
+                "You must have permission to access it."
+            )
+
+        video_id = info.get("id") or ""
+        if not video_id:
+            raise ContentUnavailableError("This video is unavailable or could not be retrieved.")
+
+        title = info.get("title") or "Untitled"
+        channel = info.get("channel") or info.get("uploader")
+        thumbnail = _pick_thumbnail(info)
+
+        video = VideoInfo(
+            external_id=video_id,
+            title=title,
+            channel_name=channel,
+            thumbnail_url=thumbnail,
+            duration_seconds=int(info.get("duration") or 0),
+            position=0,
+            available=True,
+        )
+
+        return PlaylistInfo(
+            external_id=video_id,
+            title=title,
+            channel_name=channel,
+            thumbnail_url=thumbnail,
+            source_url=video_url,
+            videos=[video],
+        )
+
     def download_audio(
         self,
         video_id: str,

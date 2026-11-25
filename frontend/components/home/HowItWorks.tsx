@@ -1,6 +1,9 @@
 const STEPS = [
-  { title: "Paste playlist URL", description: "Drop in a public YouTube playlist link." },
-  { title: "Analyze playlist", description: "We fetch titles, thumbnails, and durations." },
+  {
+    title: "Paste a URL",
+    description: "Drop in a public YouTube playlist, video, or Shorts link.",
+  },
+  { title: "Analyze it", description: "We fetch titles, thumbnails, and durations." },
   { title: "Select videos", description: "Choose all tracks or hand-pick specific ones." },
   { title: "Choose format & quality", description: "MP3 (128–320 kbps), M4A, or WAV." },
   { title: "Start conversion", description: "Track live progress for every video." },
@@ -13,7 +16,7 @@ export function HowItWorks() {
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight">How it works</h2>
-          <p className="mt-3 text-muted">Six steps from playlist link to finished audio files.</p>
+          <p className="mt-3 text-muted">Six steps from a YouTube link to finished audio files.</p>
         </div>
         <ol className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {STEPS.map((step, idx) => (

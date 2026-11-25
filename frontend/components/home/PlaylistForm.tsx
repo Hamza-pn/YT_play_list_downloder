@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
 import { analyzePlaylist, ApiRequestError } from "@/lib/api";
-import { isLikelyValidPlaylistUrl } from "@/lib/validators";
+import { isLikelyValidSourceUrl, isSingleVideoUrl } from "@/lib/validators";
 import { usePlaylistStore } from "@/hooks/usePlaylistStore";
 
 export function PlaylistForm() {
@@ -15,13 +15,18 @@ export function PlaylistForm() {
   const [loading, setLoading] = useState(false);
   const [fieldError, setFieldError] = useState<string | null>(null);
 
+  const trimmedUrl = url.trim();
+  const singleVideo = isSingleVideoUrl(trimmedUrl);
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setFieldError(null);
 
     const trimmed = url.trim();
-    if (!isLikelyValidPlaylistUrl(trimmed)) {
-      setFieldError("Enter a valid YouTube playlist URL, e.g. https://www.youtube.com/playlist?list=...");
+    if (!isLikelyValidSourceUrl(trimmed)) {
+      setFieldError(
+        "Enter a valid YouTube video, Shorts or playlist URL, e.g. https://www.youtube.com/watch?v=... or https://www.youtube.com/playlist?list=..."
+      );
       return;
     }
 
@@ -39,26 +44,28 @@ export function PlaylistForm() {
     }
   }
 
+  const submitLabel = singleVideo ? "Analyze Video" : "Analyze Playlist";
+
   return (
     <form onSubmit={handleSubmit} className="mx-auto w-full max-w-2xl" noValidate>
       <div className="flex flex-col gap-3 sm:flex-row">
         <label htmlFor="playlist-url" className="sr-only">
-          YouTube playlist URL
+          YouTube video, Shorts or playlist URL
         </label>
         <input
           id="playlist-url"
           type="url"
           inputMode="url"
           autoComplete="off"
-          placeholder="https://www.youtube.com/playlist?list=..."
+          placeholder="Paste a YouTube video, Shorts or playlist link"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           aria-invalid={!!fieldError}
           aria-describedby={fieldError ? "playlist-url-error" : undefined}
           className="flex-1 rounded-lg border border-default bg-card px-4 py-3.5 text-base outline-none ring-brand-500 transition-shadow focus:ring-2"
         />
-        <Button type="submit" size="lg" loading={loading} disabled={!url.trim()}>
-          {loading ? "Analyzing..." : "Analyze Playlist"}
+        <Button type="submit" size="lg" loading={loading} disabled={!trimmedUrl}>
+          {loading ? "Analyzing..." : submitLabel}
         </Button>
       </div>
       {fieldError && (
@@ -67,7 +74,8 @@ export function PlaylistForm() {
         </p>
       )}
       <p className="mt-3 text-xs text-muted">
-        Only submit playlists you own or have explicit permission to download. See our{" "}
+        Works with a whole playlist or a single video or Short. Only submit content you own or have
+        explicit permission to download. See our{" "}
         <a href="/terms" className="underline underline-offset-2">
           Terms of Service
         </a>

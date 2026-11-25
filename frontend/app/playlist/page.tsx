@@ -24,8 +24,10 @@ export default function PlaylistPage() {
   if (!playlist) {
     return (
       <div className="mx-auto max-w-lg px-4 py-24 text-center">
-        <h1 className="text-xl font-semibold">No playlist loaded</h1>
-        <p className="mt-2 text-sm text-muted">Analyze a playlist first to select videos to convert.</p>
+        <h1 className="text-xl font-semibold">Nothing loaded</h1>
+        <p className="mt-2 text-sm text-muted">
+          Analyze a playlist, video or Short first to select what to convert.
+        </p>
         <Link href="/" className="mt-6 inline-block">
           <Button>Go to homepage</Button>
         </Link>
@@ -68,7 +70,9 @@ export default function PlaylistPage() {
         <div className="min-w-0">
           <h1 className="truncate text-2xl font-bold">{playlist.title}</h1>
           <p className="mt-1 text-sm text-muted">{playlist.channel_name ?? "Unknown channel"}</p>
-          <p className="mt-1 text-sm text-muted">{playlist.video_count} videos available</p>
+          <p className="mt-1 text-sm text-muted">
+            {playlist.video_count} video{playlist.video_count === 1 ? "" : "s"} available
+          </p>
         </div>
       </div>
 

@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "How It Works",
-  description: "Learn how PlaylistAudio analyzes a YouTube playlist, converts selected videos to audio, and delivers your downloads.",
+  description: "Learn how PlaylistAudio analyzes a YouTube playlist or single video, converts selected videos to audio, and delivers your downloads.",
 };
 
 const STEPS = [
   {
-    title: "1. Submit a playlist URL",
-    body: "Paste a public YouTube playlist link. We validate the URL and reject anything that isn't a genuine youtube.com playlist link before any lookup happens.",
+    title: "1. Submit a URL",
+    body: "Paste a public YouTube playlist, video, or Shorts link (youtu.be short links work too). We validate the URL and reject anything that isn't a genuine YouTube video or playlist link before any lookup happens.",
   },
   {
-    title: "2. We analyze the playlist",
+    title: "2. We analyze it",
     body: "We fetch publicly available metadata only — title, channel, thumbnails, and per-video duration. Private, members-only, or otherwise restricted videos are marked unavailable and cannot be selected.",
   },
   {

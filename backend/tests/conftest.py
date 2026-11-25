@@ -130,6 +130,21 @@ def fake_media_service(monkeypatch, sample_audio_source):
                 ],
             )
 
+        def get_video_info(self, video_url: str) -> PlaylistInfo:
+            return PlaylistInfo(
+                external_id="vidSINGLE01",
+                title="Single Song",
+                channel_name="Test Channel",
+                thumbnail_url=None,
+                source_url=video_url,
+                videos=[
+                    VideoInfo(
+                        external_id="vidSINGLE01", title="Single Song", channel_name="Test Channel",
+                        thumbnail_url=None, duration_seconds=150, position=0, available=True,
+                    ),
+                ],
+            )
+
         def download_audio(self, video_id, dest_dir, *, max_file_size_bytes, timeout_seconds, progress_callback=None):
             dest = Path(dest_dir) / f"{video_id}.opus"
             shutil.copyfile(sample_audio_source, dest)
